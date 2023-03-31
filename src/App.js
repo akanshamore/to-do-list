@@ -27,13 +27,18 @@ class Action extends React.Component {
 
     return (
       <div>
-        <button onClick={this.handlePick}>What Should I do </button>
+        <button onClick={this.handlePick} disabled={!this.props.hasOptions}>What Should I do </button>
       </div>
     );
   }
 }
 
 class Option extends React.Component {
+
+  handleRemove = () => {
+    this.props.handleDeleteOption(this.props.option)
+
+  }
 
   render() {
 
@@ -43,6 +48,7 @@ class Option extends React.Component {
 
 
         <p>{this.props.option}</p>
+        <button onClick={this.handleRemove}>Delete</button>
 
       </li>
     );
@@ -50,30 +56,24 @@ class Option extends React.Component {
 }
 
 class Options extends React.Component {
-  handleRemoveAll = () => {
 
-    alert("handleRemoveAll")
-  }
 
   render() {
 
-
-    console.log("inside options");
-    console.log("props are", this.props)
 
     return (
 
 
       <div>
-        <button onClick={this.handleRemoveAll}>RemoveAll</button>
+        <button onClick={this.props.handleDeleteOptions}>Remove All</button>
         <ol>
           {
 
-            this.props.options.map((option) => {
+            this.props.options.map((option, index) => {
 
               return (
 
-                <Option option={option} key={option} />
+                <Option option={option} key={index} handleDeleteOption={this.props.handleDeleteOption} />
               )
 
 
@@ -96,8 +96,8 @@ class AddOption extends React.Component {
     const option = e.target.elements.option.value.trim();
 
     if (option) {
+      this.props.handleAddOption(option)
 
-      alert(option);
     }
   }
 
@@ -120,16 +120,37 @@ class AddOption extends React.Component {
 
 class App extends React.Component {
 
-  constructor(props) {
 
-    super(props)
 
-    this.state = {
-      options: ['thing one', 'thing two', 'thing four']
-    }
+  state = {
+    options: ['thing one', 'thing two', 'thing four'],
+
+  }
+
+  handleDeleteOptions = () => {
+
+
+    this.setState({ options: [] })
   }
 
 
+
+  handleAddOption = (option) => {
+
+
+
+
+    this.setState({ options: this.state.options.concat(option) })
+    // this.setState({ options: [] })
+  }
+
+
+
+  handleDeleteOption = (option) => {
+
+
+    this.setState({ options: this.state.options.filter((item) => item !== option) })
+  }
 
 
   render() {
@@ -142,9 +163,9 @@ class App extends React.Component {
       <div>
 
         <Header title={title} subTitle={subTitle} />
-        <Action />
-        <Options options={this.state.options} />
-        <AddOption />
+        <Action hasOptions={this.state.options.length > 0} />
+        <Options options={this.state.options} handleDeleteOptions={this.handleDeleteOptions} handleDeleteOption={this.handleDeleteOption} />
+        <AddOption handleAddOption={this.handleAddOption} />
       </div>
     );
   }
