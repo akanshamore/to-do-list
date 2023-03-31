@@ -91,8 +91,14 @@ class Options extends React.Component {
 class AddOption extends React.Component {
 
   handleOnSubmit = (e) => {
+    e.preventDefault()
 
-    alert("submit option")
+    const option = e.target.elements.option.value.trim();
+
+    if (option) {
+
+      alert(option);
+    }
   }
 
   render() {
@@ -114,19 +120,30 @@ class AddOption extends React.Component {
 
 class App extends React.Component {
 
+  constructor(props) {
+
+    super(props)
+
+    this.state = {
+      options: ['thing one', 'thing two', 'thing four']
+    }
+  }
+
+
+
 
   render() {
 
     const title = "Indecision"
     const subTitle = "Put your life in the hands of a computer"
-    const options = ['thing one', 'thing two', 'thing four']
+
 
     return (
       <div>
 
         <Header title={title} subTitle={subTitle} />
         <Action />
-        <Options options={options} />
+        <Options options={this.state.options} />
         <AddOption />
       </div>
     );
